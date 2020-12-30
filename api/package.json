@@ -1,0 +1,38 @@
+{
+  "name": "notes",
+  "version": "1.0.0",
+  "description": "A notes application back-end",
+  "main": "server.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "mocha --timeout 5000 --require @babel/register --recursive --exit --ui tdd tests/",
+    "start": "nodemon server.js"
+  },
+  "keywords": [
+    "notes",
+    "mongodb",
+    "encrypted"
+  ],
+  "author": "phalkone",
+  "license": "GPL-3.0-or-later",
+  "dependencies": {
+    "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^5.11.8"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
+    "@babel/runtime": "^7.12.5",
+    "chai": "^4.2.0",
+    "chai-http": "^4.3.0",
+    "mocha": "^8.2.1",
+    "nodemon": "^2.0.6"
+  }
+}

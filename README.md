@@ -1,2 +1,2 @@
 # Notes
-A back-end notes application
+A notes application supporting encryption.
