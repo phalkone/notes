@@ -1,26 +1,18 @@
-require('dotenv').config()
-const express = require('express')
-const http = require('http')
-const https = require('https')
-const fs = require('fs')
-const cors = require('cors')
+import { config } from 'dotenv'
+import http from 'http'
+import https from 'https'
+import { app } from './app.js'
+import { readFileSync } from 'fs'
 
-const corsOptions = {
-  origin: /localhost:(8081:8444)/,
-  optionsSuccessStatus: 200
-}
+// Configure .env use
+config()
 
-const app = express('')
-app.use(cors(corsOptions))
-
-app.get('/', (req, res) => {
-  res.json('Test of http(s) server')
-})
-
+// https key and certificate file
 const options = {
-  key: fs.readFileSync(process.env.HTTPS_KEY),
-  cert: fs.readFileSync(process.env.HTTPS_CERT)
+  key: readFileSync(process.env.HTTPS_KEY),
+  cert: readFileSync(process.env.HTTPS_CERT)
 }
 
+// Start http and https server
 https.createServer(options, app).listen(8443)
 http.createServer(options, app).listen(8080)

@@ -3,12 +3,13 @@
   "version": "1.0.0",
   "description": "A notes application back-end",
   "main": "server.js",
+  "type": "module",
   "directories": {
     "test": "tests"
   },
   "scripts": {
     "test": "mocha --timeout 5000 --require @babel/register --recursive --exit --ui tdd tests/",
-    "start": "nodemon server.js"
+    "start": "nodemon -L ./server.js"
   },
   "keywords": [
     "notes",
@@ -24,7 +25,8 @@
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^5.11.8"
+    "mongodb": "^3.6.2",
+    "morgan": "^1.10.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.10",
