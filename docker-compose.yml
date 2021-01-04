@@ -7,6 +7,8 @@ services:
       restart: always
       env_file:
       - .env.docker
+      volumes:
+      - ./mongodb-prov/:/docker-entrypoint-initdb.d
     api:
         build: api/
         ports:
@@ -17,3 +19,5 @@ services:
         - ./api/:/app/notes
         environment:
             PATH: /app/node_modules/.bin:$PATH
+        depends_on:
+        - db

@@ -2,6 +2,7 @@
 node_modules/
 dist/
 cert/
+mongodb-prov/
 
 # local env files
 .env
