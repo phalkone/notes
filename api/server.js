@@ -33,5 +33,5 @@ const options = {
 }
 
 // Start http and https server
-https.createServer(options, app).listen(8443)
-http.createServer(options, app).listen(8080)
+https.createServer(options, app).listen(process.env.PORT_HTTPS)
+http.createServer(options, app).listen(process.env.PORT)

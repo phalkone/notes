@@ -1,13 +1,13 @@
-let collection
-
 class usersDao {
+  static collection
+
   static setCollection (coll) {
-    collection = coll
+    usersDao.collection = coll
   }
 
   static async createUser (user) {
     try {
-      const result = await collection.insertOne(user)
+      const result = await usersDao.collection.insertOne(user)
       if (result.insertedCount === 1) {
         return { succes: 'Succesfully added user' }
       } else {
