@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
+import { usersRouter } from './routes/users.router.js'
 
 // Cross plaftorm origin calls to API
 const corsOptions = {
@@ -18,8 +19,12 @@ app.use(bodyParser.json())
 // For logging purposes
 app.use(morgan('dev'))
 
-app.get('/', (req, res) => {
-  res.json('Test of http(s) server')
+// Routes
+app.use('/users', usersRouter)
+
+// Route not found
+app.use('*', (req, res) => {
+  res.send('404')
 })
 
 export { app }
