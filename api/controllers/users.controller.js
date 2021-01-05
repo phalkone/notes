@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs'
 class usersController {
   static async createUser (req, res) {
     const email = req.body.email
-    const passwordRegex = /(?=(.*[0-9]))(?=.*[\!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/
+    const passwordRegex = /(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/
     if (!passwordRegex.test(req.body.password)) {
       return res.json({ error: 'Password should have 1 lowercase letter, 1 uppercase letter, 1 number and be at least 8 characters long' })
     }
