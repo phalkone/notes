@@ -17,7 +17,6 @@ tags | [String] | Array of unique strings defining all tags used in the notes
 URL | Method | Action
 --- | ------ | ------
 /users | POST | Create a new user
-/users | GET | Returns all users - for admin only
 /users/:id | GET | Returns all information regarding present user's profile
 /users/:id | PUT | Update user information
 /users/:id | DELETE | Delete user
@@ -29,15 +28,6 @@ Name | Type | In | Description
 ----- | --- | -- | -----------
 email | String | body | unique email of the user in valid format
 password | String | body | password of user
-
-#### List all users
-    GET /users
-
-Name | Type | In | Description
------ | --- | -- | -----------
-x-access-token | String | header | authentication (must be admin)
-email | String | query | *optional* filter by email
-roles | String | query | *optional* filter by role
 
 #### Get individual user
     GET /users/:id

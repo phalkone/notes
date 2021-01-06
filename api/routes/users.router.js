@@ -5,5 +5,7 @@ const usersRouter = Router()
 
 usersRouter.post('/', usersController.createUser)
 usersRouter.get('/:id', sessionsController.verifyUser, usersController.getUser)
+usersRouter.put('/:id', sessionsController.verifyUser, usersController.updateUser)
+usersRouter.delete('/:id', sessionsController.verifyUser, usersController.deleteUser)
 
 export { usersRouter }

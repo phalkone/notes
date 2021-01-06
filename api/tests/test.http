@@ -1,0 +1,54 @@
+@baseURL = https://localhost:8443
+
+# Create new user
+POST {{baseURL}}/users
+content-type: application/json
+
+{
+  "email": "cool@test.com",
+  "password": "QQsadsa4%ds"
+}
+
+###
+# @name login
+POST {{baseURL}}/sessions
+content-type: application/json
+
+{
+  "email": "cool@test.com",
+  "password": "QQsadsa4%ds"
+}
+
+###
+
+@userID = {{login.response.body.user_id}}
+@sessionID = {{login.response.body.session_id}}
+@authToken = {{login.response.headers.x-access-token}}
+
+# Get user profile
+GET {{baseURL}}/users/{{userID}}
+x-access-token: {{authToken}}
+content-type: application/json
+
+###
+# Update profile
+PUT {{baseURL}}/users/{{userID}}
+x-access-token: {{authToken}}
+content-type: application/json
+
+{
+  "email": "new@email.com",
+  "password": "neW5$test9"
+}
+
+###
+# Log out user
+DELETE {{baseURL}}/sessions/{{sessionID}}
+x-access-token: {{authToken}}
+content-type: application/json
+
+###
+# Delete user
+DELETE {{baseURL}}/users/{{userID}}
+x-access-token: {{authToken}}
+content-type: application/json

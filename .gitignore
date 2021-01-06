@@ -12,6 +12,3 @@ npm-debug.log*
 
 # Editor directories and files
 .vscode/*
-
-# Test file
-test.http

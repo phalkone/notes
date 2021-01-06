@@ -37,10 +37,45 @@ class usersController {
     }
   }
 
-  static async getUser(req, res) {
+  static async getUser (req, res) {
     try {
-      const user = await usersDao.getUser(req.user_id)
-      res.json(user[0])
+      if (req.params.id === req.user_id) {
+        const user = await usersDao.getUser(req.user_id)
+        res.json(user[0])
+      } else {
+        req.json({ error: 'Not authorized' })
+      }
+    } catch (err) {
+      res.json({ error: err.toString() })
+    }
+  }
+
+  static async updateUser (req, res) {
+    try {
+      if (req.params.id === req.user_id) {
+        const param = {}
+        if (req.body.email) param.email = req.body.email
+        if (req.body.password) {
+          param.password = await bcrypt.hash(req.body.password, 10)
+        }
+        const result = await usersDao.updateUser(req.user_id, param)
+        res.json(result)
+      } else {
+        req.json({ error: 'Not authorized' })
+      }
+    } catch (err) {
+      res.json({ error: err.toString() })
+    }
+  }
+
+  static async deleteUser (req, res) {
+    try {
+      if (req.params.id === req.user_id) {
+        const result = await usersDao.deleteUser(req.user_id) // TODO delete related sessions
+        res.json(result)
+      } else {
+        req.json({ error: 'Not authorized' })
+      }
     } catch (err) {
       res.json({ error: err.toString() })
     }
