@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import { usersRouter } from './routes/users.router.js'
+import { sessionsRouter } from './routes/sessions.router.js'
 
 // Cross plaftorm origin calls to API
 const corsOptions = {
@@ -21,6 +22,7 @@ app.use(morgan('dev'))
 
 // Routes
 app.use('/users', usersRouter)
+app.use('/sessions', sessionsRouter)
 
 // Route not found
 app.use('*', (req, res) => {

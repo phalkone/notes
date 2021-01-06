@@ -73,7 +73,7 @@ Authentication is based on JSON web tokens. Pass a JWT in each HTTP header x-acc
 URL | Method | Action
 --- | ------ | ------
 /sessions | POST | To log in a user
-/sessions/:jwt | DELETE | To log out a user
+/sessions/:id | DELETE | To log out a user
 
 #### Open new session
     POST /sessions
@@ -92,7 +92,7 @@ Returns JWT valid for 7 days or until session is closed.
 Name | Type | In | Description
 ----- | --- | -- | -----------
 x-access-token | String | header | authentication
-jwt | String | path | JWT of the session 
+id | String | path | ID of the session 
 
 ## Notes
 

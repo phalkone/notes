@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
-import http from 'http'
 import https from 'https'
 import { app } from './app.js'
 import { readFileSync } from 'fs'
 import mongodb from 'mongodb'
 import { usersDao } from './dao/users.dao.js'
+import { sessionsDao } from './dao/sessions.dao.js'
 const { MongoClient } = mongodb
 
 // Configure .env use
@@ -20,6 +20,7 @@ async function run () {
     await client.db('notes').command({ ping: 1 })
     console.log('Connected to db')
     usersDao.setCollection(client.db('notes').collection('users'))
+    sessionsDao.setCollection(client.db('notes').collection('sessions'))
   } catch (e) {
     console.log(e)
   }
@@ -33,5 +34,9 @@ const options = {
 }
 
 // Start http and https server
-https.createServer(options, app).listen(process.env.PORT_HTTPS)
-http.createServer(options, app).listen(process.env.PORT)
+https.createServer(options, app).listen(process.env.PORT_HTTPS, () => {
+  console.log(`HTTPS server listening on ${process.env.PORT_HTTPS}`)
+})
+app.listen(process.env.PORT, () => {
+  console.log(`HTTP server listening on ${process.env.PORT}`)
+})

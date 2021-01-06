@@ -6,16 +6,19 @@ class usersController {
     const email = req.body.email
     const passwordRegex = /(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/
     if (!passwordRegex.test(req.body.password)) {
-      return res.json({ error: 'Password should have 1 lowercase letter, 1 uppercase letter, 1 number and be at least 8 characters long' })
+      return res.json({
+        error: 'Password should have 1 lowercase letter, ' +
+        '1 uppercase letter, 1 number and be at least 8 characters long'
+      })
     }
     try {
       const password = await bcrypt.hash(req.body.password, 10)
       const result = await usersDao.createUser({ email, password, roles: ['user'] })
       if (result.succes) {
         res.json(result)
-      } else if (result.name === 'MongoError') {
-        let error
-        switch (result.code) {
+      } else if (result.error) {
+        let error = result.error
+        switch (result.error.code) {
           case 11000:
             error = 'Email already registed'
             break
@@ -30,7 +33,16 @@ class usersController {
         res.json({ result })
       }
     } catch (err) {
-      res.json(err)
+      res.json({ error: err.toString() })
+    }
+  }
+
+  static async getUser(req, res) {
+    try {
+      const user = await usersDao.getUser(req.user_id)
+      res.json(user[0])
+    } catch (err) {
+      res.json({ error: err.toString() })
     }
   }
 }
