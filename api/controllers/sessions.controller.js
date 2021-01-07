@@ -51,6 +51,19 @@ class sessionsController {
     }
   }
 
+  static async verifyAdmin (req, res, next) {
+    try {
+      const result = await usersDao.isAdmin(req.user_id)
+      if (result) {
+        next()
+      } else {
+        res.json({ error: 'Not authorized. Must be admin' })
+      }
+    } catch (err) {
+      res.json({ error: err.toString() })
+    }
+  }
+
   static async logout (req, res) {
     try {
       const session_id = req.params.id

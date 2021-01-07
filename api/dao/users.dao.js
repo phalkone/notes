@@ -50,9 +50,37 @@ class usersDao {
     }
   }
 
+  static async getUsers(params){
+    try {
+      const limit = + params.max_page || 20
+      const skip = params.page * params.max_page || 0
+      const query = {}
+      if(params.email) query.email = params.email
+      if(params.roles) query.roles = params.roles
+      const cursor = await usersDao.collection.find(query)
+        .sort({ email: 1 }).skip(skip).limit(limit)
+      return await cursor.toArray()
+    } catch (err) {
+      console.log(err)
+      return { error: err.toString() }
+    }
+  }
+
   static async getUserByEmail(email){
     try {
       const user = await usersDao.collection.findOne({ email })
+      return user
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async isAdmin(id){
+    try {
+      const user = await usersDao.collection.findOne({
+        '_id': bson.ObjectId.createFromHexString(id),
+        roles: 'admin'
+      })
       return user
     } catch (err) {
       return { error: err.toString() }

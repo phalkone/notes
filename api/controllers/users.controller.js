@@ -51,7 +51,14 @@ class usersController {
     }
   }
 
-  // TODO add getAllUsers
+  static async getUsers (req, res) {
+    try {
+      const users = await usersDao.getUsers(req.query)
+      res.json(users)
+    } catch (err) {
+      res.json({ error: err.toString() })
+    }
+  }
 
   static async updateUser (req, res) {
     try {

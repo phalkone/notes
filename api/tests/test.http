@@ -31,6 +31,15 @@ x-access-token: {{authToken}}
 content-type: application/json
 
 ###
+# Get all users as admin
+GET {{baseURL}}/users
+  ?roles=admin
+  &page=0
+  &max_page=3
+x-access-token: {{authToken}}
+content-type: application/json 
+
+###
 # Update profile
 PUT {{baseURL}}/users/{{userID}}
 x-access-token: {{authToken}}

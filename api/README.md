@@ -38,6 +38,8 @@ Name | Type | In | Description
 x-access-token | String | header | authentication (must be admin)
 email | String | query | *optional* filter by email
 roles | String | query | *optional* filter by role
+page | int | query | *optional*  page number - default 0
+max_page | int | query | *optional* results per page - default 20
 
 #### Get individual user
     GET /users/:id
