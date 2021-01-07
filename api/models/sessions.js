@@ -4,7 +4,7 @@ db.createCollection('sessions', {
   validator: {
     $jsonSchema: {
       bsonType: 'object',
-      required: ['user_id', 'expiry'],
+      required: ['user_id', 'expiry', 'last_access'],
       properties: {
         _id: {},
         user_id: {
@@ -14,6 +14,10 @@ db.createCollection('sessions', {
         expiry: {
           bsonType: 'date',
           description: 'Date when session will expire'
+        },
+        last_access: {
+          bsonType: 'date',
+          description: 'Last time session was used'
         }
       }
     }

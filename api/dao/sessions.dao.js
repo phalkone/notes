@@ -11,7 +11,9 @@ class sessionsDao {
     try {
       const expiry = new Date(Date.now() + (7 * 24 * 60 * 60 * 1000))
       const result = await sessionsDao.collection.insertOne({ 
-        user_id: user_id, expiry
+        user_id: user_id, 
+        last_access: new Date(),
+        expiry
       })
       if (result.insertedCount === 1) {
         return { id: result.insertedId }
@@ -25,12 +27,14 @@ class sessionsDao {
 
   static async getSession(id, user_id){
     try {
-      const session = await sessionsDao.collection.findOne({ 
+      const session = await sessionsDao.collection.findOneAndUpdate({ 
         _id: bson.ObjectId.createFromHexString(id),
         user_id: bson.ObjectId.createFromHexString(user_id)
+      }, {
+        $currentDate: { last_access: true }
       })
-      if(session){
-        return session
+      if(session.value){
+        return session.value
       } else {
         return { error: 'Requested session not found or not matching with user' }
       }
