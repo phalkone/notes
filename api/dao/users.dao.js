@@ -57,13 +57,13 @@ class usersDao {
 
   static async updateUser(id, param){
     try {
-      const result = await usersDao.collection.findOneAndUpdate({
+      const result = await usersDao.collection.updateOne({
         '_id': bson.ObjectId.createFromHexString(id)
-      }, param)
-      if (result.updatedCount === 1) {
+      }, { $set: param })
+      if (result.modifiedCount === 1) {
         return { succes: 'Succesfully updated user' }
       } else {
-        return { error: 'An error occured while creating the user' }
+        return { error: 'An error occured while updating the user' }
       }
     } catch (err) {
       return { error: err.toString() }
@@ -72,13 +72,13 @@ class usersDao {
 
   static async deleteUser(id){
     try {
-      const result = await usersDao.collection.findOneAndDelete({
+      const result = await usersDao.collection.deleteOne({
         '_id': bson.ObjectId.createFromHexString(id)
       })
       if (result.deletedCount === 1) {
         return { succes: 'Succesfully deleted user' }
       } else {
-        return { error: 'An error occured while creating the user' }
+        return { error: 'An error occured while deleting the user' }
       }
     } catch (err) {
       return { error: err.toString() }

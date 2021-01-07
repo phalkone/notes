@@ -1,4 +1,5 @@
 import { usersDao } from '../dao/users.dao.js'
+import { sessionsDao } from '../dao/sessions.dao.js'
 import bcrypt from 'bcryptjs'
 
 class usersController {
@@ -71,8 +72,9 @@ class usersController {
   static async deleteUser (req, res) {
     try {
       if (req.params.id === req.user_id) {
-        const result = await usersDao.deleteUser(req.user_id) // TODO delete related sessions
-        res.json(result)
+        const users = await usersDao.deleteUser(req.user_id)
+        const sessions = await sessionsDao.deleteUserSessions(req.user_id)
+        res.json({ users, sessions })
       } else {
         req.json({ error: 'Not authorized' })
       }

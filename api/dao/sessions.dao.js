@@ -45,7 +45,22 @@ class sessionsDao {
         user_id: bson.ObjectId.createFromHexString(user_id)
       })
       if (result.deletedCount === 1) {
-        return true
+        return { success: 'Succesfully deleted session' }
+      } else {
+        return { error: 'Error deleting session' }
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async deleteUserSessions (user_id) {
+    try {
+      const result = await sessionsDao.collection.deleteMany({
+        user_id: bson.ObjectId.createFromHexString(user_id)
+      })
+      if (result.deletedCount >= 1) {
+        return { success: 'Succesfully deleted sessions' }
       } else {
         return { error: 'Error deleting session' }
       }

@@ -37,8 +37,7 @@ x-access-token: {{authToken}}
 content-type: application/json
 
 {
-  "email": "new@email.com",
-  "password": "neW5$test9"
+  "password": "neW9$tes51t9"
 }
 
 ###
