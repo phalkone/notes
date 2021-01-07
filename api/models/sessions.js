@@ -19,3 +19,5 @@ db.createCollection('sessions', {
     }
   }
 })
+
+db.sessions.createIndex({ user_id: 1 })

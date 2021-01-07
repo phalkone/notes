@@ -26,12 +26,13 @@ class sessionsDao {
   static async getSession(id, user_id){
     try {
       const session = await sessionsDao.collection.findOne({ 
-        _id: bson.ObjectId.createFromHexString(id)
+        _id: bson.ObjectId.createFromHexString(id),
+        user_id: bson.ObjectId.createFromHexString(user_id)
       })
-      if(session.user_id.toString() === user_id){
+      if(session){
         return session
       } else {
-        return { error: 'Requested sessions does not match with user'}
+        return { error: 'Requested session not found or not matching with user' }
       }
     } catch (err) {
       return { error: err.toString() }

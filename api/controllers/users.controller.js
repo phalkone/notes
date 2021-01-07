@@ -15,7 +15,7 @@ class usersController {
     try {
       const password = await bcrypt.hash(req.body.password, 10)
       const result = await usersDao.createUser({ email, password, roles: ['user'] })
-      if (result.succes) {
+      if (result.success) {
         res.json(result)
       } else if (result.error) {
         let error = result.error
@@ -50,6 +50,8 @@ class usersController {
       res.json({ error: err.toString() })
     }
   }
+
+  // TODO add getAllUsers
 
   static async updateUser (req, res) {
     try {

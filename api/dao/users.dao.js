@@ -11,7 +11,7 @@ class usersDao {
     try {
       const result = await usersDao.collection.insertOne(user)
       if (result.insertedCount === 1) {
-        return { succes: 'Succesfully added user' }
+        return { success: 'Succesfully added user' }
       } else {
         return { error: 'An error occured while creating the user' }
       }
@@ -35,6 +35,10 @@ class usersDao {
             'localField': '_id', 
             'foreignField': 'user_id', 
             'as': 'sessions'
+          }
+        } , {
+          '$project': {
+            'password': 0
           }
         }
       ]
@@ -61,7 +65,7 @@ class usersDao {
         '_id': bson.ObjectId.createFromHexString(id)
       }, { $set: param })
       if (result.modifiedCount === 1) {
-        return { succes: 'Succesfully updated user' }
+        return { success: 'Succesfully updated user' }
       } else {
         return { error: 'An error occured while updating the user' }
       }
@@ -76,7 +80,7 @@ class usersDao {
         '_id': bson.ObjectId.createFromHexString(id)
       })
       if (result.deletedCount === 1) {
-        return { succes: 'Succesfully deleted user' }
+        return { success: 'Succesfully deleted user' }
       } else {
         return { error: 'An error occured while deleting the user' }
       }

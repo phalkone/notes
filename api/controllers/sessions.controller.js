@@ -58,7 +58,7 @@ class sessionsController {
       if (result.error) {
         res.json({ error: result.error })
       } else {
-        res.json({ succes: 'Succesfully logged out the user' })
+        res.json({ success: 'Succesfully logged out the user' })
       }
     } catch (err) {
       res.json({ error: err.toString() })
