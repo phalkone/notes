@@ -14,15 +14,15 @@ class sessionsController {
       bcrypt.compare(password, user.password)
         .then(async (result) => {
           if (result) {
-            const result = await sessionsDao.createSession(user._id)
-            if (result.error) {
-              res.json({ error: result.error })
+            const session = await sessionsDao.createSession(user._id)
+            if (session.error) {
+              res.json({ error: session.error })
             } else {
-              jwt.sign({ user_id: user._id, session_id: result.id },
+              jwt.sign({ user_id: user._id, session_id: session.id },
                 process.env.SECRET, { expiresIn: '7d' }, async (err, token) => {
                   if (err) return res.json({ error: err })
                   res.set('x-access-token', token)
-                  res.json({ user, session_id: result.id })
+                  res.json({ user, session_id: session.id })
                 })
             }
           } else {
@@ -41,7 +41,7 @@ class sessionsController {
       const decoded = await jwt.verify(token, process.env.SECRET)
       const session = await sessionsDao.getSession(decoded.session_id, decoded.user_id)
       if (session.expiry && new Date(session.expiry).valueOf() > Date.now()) {
-        req.user_id = decoded.user_id
+        req.user = await usersDao.getUser(decoded.user_id)
         next()
       } else {
         res.json({ error: 'Session does not exist or has expired' })
@@ -53,7 +53,7 @@ class sessionsController {
 
   static async verifyAdmin (req, res, next) {
     try {
-      const result = await usersDao.isAdmin(req.user_id)
+      const result = await usersDao.isAdmin(req.user._id)
       if (result) {
         next()
       } else {
@@ -67,7 +67,7 @@ class sessionsController {
   static async logout (req, res) {
     try {
       const session_id = req.params.id
-      const result = await sessionsDao.deleteSession(session_id, req.user_id)
+      const result = await sessionsDao.deleteSession(session_id, req.user._id)
       if (result.error) {
         res.json({ error: result.error })
       } else {

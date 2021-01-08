@@ -1,26 +1,26 @@
 import bson from 'bson'
 
-class usersDao {
+class notesDao {
   static collection
 
   static setCollection (coll) {
-    usersDao.collection = coll
+    notesDao.collection = coll
   }
 
-  static async createUser (user) {
+  static async createNote (note) {
     try {
-      const result = await usersDao.collection.insertOne(user)
+      const result = await notesDao.collection.insertOne(note)
       if (result.insertedCount === 1) {
-        return { success: 'Succesfully added user' }
+        return { success: 'Succesfully added note' }
       } else {
-        return { error: 'An error occured while creating the user' }
+        return { error: 'An error occured while creating the note' }
       }
     } catch (err) {
       return { error: err.toString() }
     }
   }
 
-  static async getUser(id){
+  static async getNote(id){
     try {
       const pipeline = [
         {
@@ -33,7 +33,7 @@ class usersDao {
           '$lookup': {
             'from': 'sessions', 
             'localField': '_id', 
-            'foreignField': 'user_id', 
+            'foreignField': 'note_id', 
             'as': 'sessions'
           }
         } , {
@@ -42,23 +42,23 @@ class usersDao {
           }
         }
       ]
-      const cursor = await usersDao.collection.aggregate(pipeline)
-      const user = await cursor.toArray()
-      return user[0]
+      const cursor = await notesDao.collection.aggregate(pipeline)
+      const note = await cursor.toArray()
+      return note[0]
     } catch (err) {
       console.log(err)
       return { error: err.toString() }
     }
   }
 
-  static async getUsers(params){
+  static async getNotes(params){
     try {
       const limit = + params.max_page || 20
       const skip = params.page * params.max_page || 0
       const query = {}
       if(params.email) query.email = params.email
       if(params.roles) query.roles = params.roles
-      const cursor = await usersDao.collection.find(query)
+      const cursor = await notesDao.collection.find(query)
         .sort({ email: 1 }).skip(skip).limit(limit)
       return await cursor.toArray()
     } catch (err) {
@@ -67,51 +67,30 @@ class usersDao {
     }
   }
 
-  static async getUserByEmail(email){
+  static async updateNote(id, param){
     try {
-      const user = await usersDao.collection.findOne({ email }, { password: 0 })
-      return user
-    } catch (err) {
-      return { error: err.toString() }
-    }
-  }
-
-  static async isAdmin(id){
-    try {
-      const user = await usersDao.collection.findOne({
-        '_id': bson.ObjectId.createFromHexString(id),
-        roles: 'admin'
-      })
-      return user
-    } catch (err) {
-      return { error: err.toString() }
-    }
-  }
-
-  static async updateUser(id, param){
-    try {
-      const result = await usersDao.collection.updateOne({
+      const result = await notesDao.collection.updateOne({
         '_id': bson.ObjectId.createFromHexString(id)
       }, { $set: param })
       if (result.modifiedCount === 1) {
-        return { success: 'Succesfully updated user' }
+        return { success: 'Succesfully updated note' }
       } else {
-        return { error: 'An error occured while updating the user' }
+        return { error: 'An error occured while updating the note' }
       }
     } catch (err) {
       return { error: err.toString() }
     }
   }
 
-  static async deleteUser(id){
+  static async deleteNote(id){
     try {
-      const result = await usersDao.collection.deleteOne({
+      const result = await notesDao.collection.deleteOne({
         '_id': bson.ObjectId.createFromHexString(id)
       })
       if (result.deletedCount === 1) {
-        return { success: 'Succesfully deleted user' }
+        return { success: 'Succesfully deleted note' }
       } else {
-        return { error: 'An error occured while deleting the user' }
+        return { error: 'An error occured while deleting the note' }
       }
     } catch (err) {
       return { error: err.toString() }
@@ -119,4 +98,4 @@ class usersDao {
   }
 }
 
-export { usersDao }
+export { notesDao }

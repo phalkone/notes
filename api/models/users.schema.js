@@ -39,7 +39,7 @@ db.createCollection('users', {
   }
 })
 
-db.users.createIndex({ email: 1 }, { 
+db.users.createIndex({ email: 1 }, {
   unique: true,
   collation: { locale: 'en', strength: 2 }
- })
+})

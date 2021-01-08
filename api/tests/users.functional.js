@@ -301,6 +301,38 @@ suite('Functional testing of users API calls', function () {
           done()
         })
     })
+    test('Should not be able to update own profile when email is invalid', function (done) {
+      chai.request(server)
+        .put('/users/' + testUser.user_id)
+        .set('x-access-token', testUser.jwt)
+        .type('form')
+        .send({
+          email: 'invalid.com',
+          password: 'newPassword1@'
+        })
+        .end(function (err, res) {
+          if (err) return err
+          assert.equal(res.status, 200)
+          assert.exists(res.body.success)
+          done()
+        })
+    })
+    test('Should not be able to update own profile when password is invalid', function (done) {
+      chai.request(server)
+        .put('/users/' + testUser.user_id)
+        .set('x-access-token', testUser.jwt)
+        .type('form')
+        .send({
+          email: 'new@email.com',
+          password: 'secret'
+        })
+        .end(function (err, res) {
+          if (err) return err
+          assert.equal(res.status, 200)
+          assert.exists(res.body.success)
+          done()
+        })
+    })
     test('Should not be able to update own profile when jwt is incorrect', function (done) {
       chai.request(server)
         .put('/users/' + testUser.user_id)

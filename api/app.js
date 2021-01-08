@@ -3,6 +3,7 @@ import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
 import { usersRouter } from './routes/users.router.js'
+import { notesRouter } from './routes/notes.router.js'
 import { sessionsRouter } from './routes/sessions.router.js'
 
 // Cross plaftorm origin calls to API
@@ -22,11 +23,13 @@ app.use(morgan('dev'))
 
 // Routes
 app.use('/users', usersRouter)
+app.use('/notes', notesRouter)
 app.use('/sessions', sessionsRouter)
 
 // Route not found
 app.use('*', (req, res) => {
-  res.send('404')
+  res.status(404)
+  res.json({ error: 'Route not found' })
 })
 
 export { app }
