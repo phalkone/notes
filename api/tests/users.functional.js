@@ -1,3 +1,4 @@
+import { suite, test } from 'mocha'
 import chai from 'chai'
 import chaiHttp from 'chai-http'
 import dotenv from 'dotenv'
@@ -117,10 +118,10 @@ suite('Functional testing of users API calls', function () {
           if (err) return err
           assert.equal(res.status, 200)
           assert.exists(res.body.session_id)
-          assert.exists(res.body.user_id)
+          assert.exists(res.body.user._id)
           testUser.jwt = res.headers['x-access-token']
           testUser.session_id = res.body.session_id
-          testUser.user_id = res.body.user_id
+          testUser.user_id = res.body.user._id
           done()
         })
     })
@@ -133,7 +134,7 @@ suite('Functional testing of users API calls', function () {
           if (err) return err
           assert.equal(res.status, 200)
           assert.exists(res.body.session_id)
-          assert.exists(res.body.user_id)
+          assert.exists(res.body.user._id)
           testUser.jwt2 = res.headers['x-access-token']
           testUser.session_id2 = res.body.session_id
           done()

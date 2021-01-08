@@ -68,7 +68,7 @@ class usersDao {
 
   static async getUserByEmail(email){
     try {
-      const user = await usersDao.collection.findOne({ email })
+      const user = await usersDao.collection.findOne({ email }).project({ password: 0 })
       return user
     } catch (err) {
       return { error: err.toString() }

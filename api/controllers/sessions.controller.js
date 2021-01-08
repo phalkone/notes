@@ -22,7 +22,7 @@ class sessionsController {
                 process.env.SECRET, { expiresIn: '7d' }, async (err, token) => {
                   if (err) return res.json({ error: err })
                   res.set('x-access-token', token)
-                  res.json({ user_id: user._id, session_id: result.id })
+                  res.json({ user, session_id: result.id })
                 })
             }
           } else {
