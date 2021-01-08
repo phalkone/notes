@@ -1,5 +1,5 @@
 import { usersDao } from '../dao/users.dao.js'
-import { sessionsDao } from '../dao/sessions.dao.js'
+import { sessionsController } from './sessions.controller.js'
 import bcrypt from 'bcryptjs'
 
 const passwordRegex = /(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/
@@ -15,12 +15,17 @@ class usersController {
     }
     try {
       const password = await bcrypt.hash(req.body.password, 10)
-      const result = await usersDao.createUser({ email, password, roles: ['user'] })
-      if (result.success) {
-        res.json(result)
-      } else if (result.error) {
-        let error = result.error
-        switch (result.error.code) {
+      const user = await usersDao.createUser({
+        email, password, roles: ['user']
+      }, req.headers['user-agent'])
+      if (user._id) {
+        const token = await sessionsController.generateToken(user._id, user.sessions_id)
+        if (token.error) return res.json({ error: token.error })
+        res.set('x-access-token', token)
+        res.json(user)
+      } else if (user.error) {
+        let error = user.error
+        switch (user.error.code) {
           case 11000:
             error = 'Email already registed'
             break
@@ -28,11 +33,11 @@ class usersController {
             error = 'Document failed validation'
             break
           default:
-            error = `MongoError ${result.code}`
+            error = `MongoError ${user.code}`
         }
         res.json({ error })
       } else {
-        res.json({ result })
+        res.json({ user })
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -42,10 +47,9 @@ class usersController {
   static async getUser (req, res) {
     try {
       if (req.params.id === req.user._id) {
-        const user = await usersDao.getUser(req.user._id)
-        res.json(user)
+        res.json(req.user)
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -72,7 +76,7 @@ class usersController {
         const result = await usersDao.updateUser(req.user._id, param)
         res.json(result)
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -82,11 +86,10 @@ class usersController {
   static async deleteUser (req, res) {
     try {
       if (req.params.id === req.user._id) {
-        const users = await usersDao.deleteUser(req.user._id)
-        const sessions = await sessionsDao.deleteUserSessions(req.user._id)
-        res.json({ users, sessions })
+        const result = await usersDao.deleteUser(req.user._id)
+        res.json(result)
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })

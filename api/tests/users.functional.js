@@ -24,7 +24,7 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.success)
+          assert.exists(res.body._id)
           done()
         })
     })
@@ -117,11 +117,11 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.session_id)
-          assert.exists(res.body.user._id)
+          assert.exists(res.body.session._id)
+          assert.exists(res.body._id)
           testUser.jwt = res.headers['x-access-token']
-          testUser.session_id = res.body.session_id
-          testUser.user_id = res.body.user._id
+          testUser.session_id = res.body.session._id
+          testUser.user_id = res.body._id
           done()
         })
     })
@@ -133,10 +133,10 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.session_id)
-          assert.exists(res.body.user._id)
+          assert.exists(res.body.session._id)
+          assert.exists(res.body._id)
           testUser.jwt2 = res.headers['x-access-token']
-          testUser.session_id2 = res.body.session_id
+          testUser.session_id2 = res.body.session._id
           done()
         })
     })
@@ -250,7 +250,7 @@ suite('Functional testing of users API calls', function () {
           done()
         })
     })
-    test('Should not able to get profile without deleted session', function (done) {
+    test('Should not able to get profile with deleted session', function (done) {
       chai.request(server)
         .get('/users/' + testUser.user_id)
         .set('x-access-token', testUser.jwt2)

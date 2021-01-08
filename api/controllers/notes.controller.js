@@ -20,7 +20,7 @@ class notesController {
         const note = await notesDao.getNote(req.params.id)
         res.json(Note[0])
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -47,7 +47,7 @@ class notesController {
         const result = await notesDao.updateNote(req.Note_id, param)
         res.json(result)
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -60,7 +60,7 @@ class notesController {
         const notes = await notesDao.deleteNote(req.Note_id)
         res.json({ notes, sessions })
       } else {
-        req.json({ error: 'Not authorized' })
+        res.json({ error: 'Not authorized' })
       }
     } catch (err) {
       res.json({ error: err.toString() })

@@ -4,7 +4,6 @@ import { app } from './app.js'
 import { readFileSync } from 'fs'
 import mongodb from 'mongodb'
 import { usersDao } from './dao/users.dao.js'
-import { sessionsDao } from './dao/sessions.dao.js'
 import { notesDao } from './dao/notes.dao.js'
 const { MongoClient } = mongodb
 
@@ -21,7 +20,6 @@ async function run () {
     await client.db('notes').command({ ping: 1 })
     console.log('Connected to db')
     usersDao.setCollection(client.db('notes').collection('users'))
-    sessionsDao.setCollection(client.db('notes').collection('sessions'))
     notesDao.setCollection(client.db('notes').collection('notes'))
   } catch (e) {
     console.log(e)
