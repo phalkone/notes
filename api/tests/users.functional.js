@@ -245,7 +245,7 @@ suite('Functional testing of users API calls', function () {
           assert.equal(res.status, 200)
           assert.equal(res.body._id, testUser.user_id)
           assert.equal(res.body.email, testUser.email)
-          assert.exists(res.body.sessions)
+          assert.exists(res.body.session)
           assert.notExists(res.body.password)
           done()
         })
@@ -313,7 +313,7 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.success)
+          assert.exists(res.body.error)
           done()
         })
     })
@@ -329,7 +329,7 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.success)
+          assert.exists(res.body.error)
           done()
         })
     })
@@ -393,8 +393,7 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.users.success)
-          assert.exists(res.body.sessions.success)
+          assert.exists(res.body.success)
           done()
         })
     })

@@ -16,7 +16,7 @@ db.createCollection('notes', {
           description: 'Body of the note'
         },
         favorite: {
-          bsonType: 'boolean',
+          bsonType: 'bool',
           description: 'Marked as favorite'
         },
         files: {
@@ -42,7 +42,4 @@ db.createCollection('notes', {
   }
 })
 
-db.users.createIndex({ email: 1 }, {
-  unique: true,
-  collation: { locale: 'en', strength: 2 }
-})
+db.notes.createIndex({ tags: 1 })

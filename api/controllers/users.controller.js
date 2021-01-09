@@ -3,14 +3,15 @@ import { sessionsController } from './sessions.controller.js'
 import bcrypt from 'bcryptjs'
 
 const passwordRegex = /(?=(.*[0-9]))(?=.*[!@#$%^&*()\\[\]{}\-_+=~`|:;"'<>,./?])(?=.*[a-z])(?=(.*[A-Z]))(?=(.*)).{8,}/
+const passwordValid = 'Password should have 1 lowercase letter, ' +
+  '1 uppercase letter, 1 number and be at least 8 characters long'
 
 class usersController {
   static async createUser (req, res) {
     const email = req.body.email
     if (!passwordRegex.test(req.body.password)) {
       return res.json({
-        error: 'Password should have 1 lowercase letter, ' +
-        '1 uppercase letter, 1 number and be at least 8 characters long'
+        error: passwordValid
       })
     }
     try {
@@ -23,21 +24,8 @@ class usersController {
         if (token.error) return res.json({ error: token.error })
         res.set('x-access-token', token)
         res.json(user)
-      } else if (user.error) {
-        let error = user.error
-        switch (user.error.code) {
-          case 11000:
-            error = 'Email already registed'
-            break
-          case 121:
-            error = 'Document failed validation'
-            break
-          default:
-            error = `MongoError ${user.code}`
-        }
-        res.json({ error })
       } else {
-        res.json({ user })
+        res.json(user)
       }
     } catch (err) {
       res.json({ error: err.toString() })
@@ -72,6 +60,11 @@ class usersController {
         if (req.body.email) param.email = req.body.email
         if (req.body.password && passwordRegex.test(req.body.password)) {
           param.password = await bcrypt.hash(req.body.password, 10)
+        } else if (req.body.password) {
+          return res.json({ error: passwordValid })
+        }
+        if (Object.keys(param).length === 0) {
+          return res.json({ error: 'Please provide paramters to update'})
         }
         const result = await usersDao.updateUser(req.user._id, param)
         res.json(result)

@@ -6,7 +6,9 @@ class sessionsController {
   static async login (req, res) {
     try {
       const email = req.body.email
+      if (!email) return res.json({ error: 'Please provide email' })
       const password = req.body.password
+      if (!password) return res.json({ error: 'Please provide password' })
       const result = await usersDao.getUserByEmail(email)
       if (!result) {
         res.json({ error: 'User not found' })
@@ -28,7 +30,7 @@ class sessionsController {
         }
       }
     } catch (err) {
-      return { error: err.toString() }
+      res.json({ error: err.toString() })
     }
   }
 
@@ -38,7 +40,7 @@ class sessionsController {
         process.env.SECRET, { expiresIn: '7d' })
       return token
     } catch (err) {
-      return { error: err.toString() }
+      res.json({ error: err.toString() })
     }
   }
 

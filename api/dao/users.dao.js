@@ -113,14 +113,15 @@ class usersDao {
       }, { password: 0 })
       return user
     } catch (err) {
-      console.log(err)
       return { error: err.toString() }
     }
   }
 
   static async getUserByEmail(email){
     try {
-      const user = await usersDao.collection.findOne({ email }, 
+      const user = await usersDao.collection.findOne({
+        email: { $regex: new RegExp(`^${email}$`, 'i') }
+      }, 
         { projection: { password: 1 } })
       return user
     } catch (err) {

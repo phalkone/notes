@@ -6,7 +6,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cool2@test.com",
+  "email": "CooL2@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -17,7 +17,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-    "email": "cool2@test.com",
+  "email": "cooL3@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -48,6 +48,7 @@ x-access-token: {{authToken}}
 content-type: application/json
 
 {
+  "email": "cooL3@tEst.com",
   "password": "neW9$tes51t9"
 }
 
