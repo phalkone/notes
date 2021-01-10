@@ -6,31 +6,31 @@ class sessionsController {
   static async login (req, res) {
     try {
       const email = req.body.email
-      if (!email) return res.json({ error: 'Please provide email' })
+      if (!email) return res.status(400).json({ error: 'Please provide email' })
       const password = req.body.password
-      if (!password) return res.json({ error: 'Please provide password' })
+      if (!password) return res.status(400).json({ error: 'Please provide password' })
       const result = await usersDao.getUserByEmail(email)
       if (!result) {
-        res.json({ error: 'User not found' })
+        res.status(400).json({ error: 'User not found' })
       } else {
         const match = await bcrypt.compare(password, result.password)
         if (match) {
           const user = await usersDao.createSession(result._id,
             req.headers['user-agent'])
           if (user.error) {
-            res.json(user)
+            res.status(400).json(user)
           } else {
             const token = await sessionsController.generateToken(user._id, user.session._id)
-            if (token.error) return res.json({ error: token.error })
+            if (token.error) return res.status(401).json({ error: token.error })
             res.set('x-access-token', token)
-            res.json(user)
+            res.status(200).json(user)
           }
         } else {
-          res.json({ error: 'Invalid credentials' })
+          res.status(401).json({ error: 'Invalid credentials' })
         }
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 
@@ -40,7 +40,7 @@ class sessionsController {
         process.env.SECRET, { expiresIn: '7d' })
       return token
     } catch (err) {
-      res.json({ error: err.toString() })
+      return { error: err.toString() }
     }
   }
 
@@ -54,10 +54,10 @@ class sessionsController {
         req.user = user
         next()
       } else {
-        res.json({ error: 'Cannot authenticate user' })
+        res.status(401).json({ error: 'Cannot authenticate user' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(401).json({ error: err.toString() })
     }
   }
 
@@ -66,10 +66,10 @@ class sessionsController {
       if (req.user.roles.includes('admin')) {
         next()
       } else {
-        res.json({ error: 'Not authorized. Must be admin' })
+        res.status(401).json({ error: 'Not authorized. Must be admin' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(401).json({ error: err.toString() })
     }
   }
 
@@ -78,12 +78,12 @@ class sessionsController {
       const session_id = req.params.id
       const result = await usersDao.deleteSession(req.user._id, session_id)
       if (result.error) {
-        res.json({ error: result.error })
+        res.status(400).json({ error: result.error })
       } else {
-        res.json({ success: 'Succesfully logged out the user' })
+        res.status(200).json({ success: 'Succesfully logged out the user' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 }

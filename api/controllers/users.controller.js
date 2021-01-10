@@ -9,8 +9,10 @@ const passwordValid = 'Password should have 1 lowercase letter, ' +
 class usersController {
   static async createUser (req, res) {
     const email = req.body.email
+    if (!email) return res.status(400).json({ error: 'Please provide email' })
+    if (!req.body.password) return res.status(400).json({ error: 'Please provide password' })
     if (!passwordRegex.test(req.body.password)) {
-      return res.json({
+      return res.status(400).json({
         error: passwordValid
       })
     }
@@ -20,36 +22,36 @@ class usersController {
         email, password, roles: ['user']
       }, req.headers['user-agent'])
       if (user._id) {
-        const token = await sessionsController.generateToken(user._id, user.sessions_id)
-        if (token.error) return res.json({ error: token.error })
+        const token = await sessionsController.generateToken(user._id, user.session._id)
+        if (token.error) return res.status(401).json({ error: token.error })
         res.set('x-access-token', token)
-        res.json(user)
+        res.status(200).json(user)
       } else {
-        res.json(user)
+        res.status(400).json(user)
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 
   static async getUser (req, res) {
     try {
       if (req.params.id === req.user._id) {
-        res.json(req.user)
+        res.status(200).json(req.user)
       } else {
-        res.json({ error: 'Not authorized' })
+        res.status(401).json({ error: 'Not authorized' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 
   static async getUsers (req, res) {
     try {
       const users = await usersDao.getUsers(req.query)
-      res.json(users)
+      res.status(200).json(users)
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 
@@ -61,18 +63,22 @@ class usersController {
         if (req.body.password && passwordRegex.test(req.body.password)) {
           param.password = await bcrypt.hash(req.body.password, 10)
         } else if (req.body.password) {
-          return res.json({ error: passwordValid })
+          return res.status(400).json({ error: passwordValid })
         }
         if (Object.keys(param).length === 0) {
-          return res.json({ error: 'Please provide paramters to update'})
+          return res.status(400).json({ error: 'Please provide paramters to update'})
         }
-        const result = await usersDao.updateUser(req.user._id, param)
-        res.json(result)
+        const result = await usersDao.updateUser(req.user._id, param, req.user.session)
+        if (result.error) {
+          res.status(400).json(result)
+        } else {
+          res.status(200).json(result)
+        }
       } else {
-        res.json({ error: 'Not authorized' })
+        res.status(401).json({ error: 'Not authorized' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 
@@ -80,12 +86,12 @@ class usersController {
     try {
       if (req.params.id === req.user._id) {
         const result = await usersDao.deleteUser(req.user._id)
-        res.json(result)
+        res.status(200).json(result)
       } else {
-        res.json({ error: 'Not authorized' })
+        res.status(401).json({ error: 'Not authorized' })
       }
     } catch (err) {
-      res.json({ error: err.toString() })
+      res.status(400).json({ error: err.toString() })
     }
   }
 }

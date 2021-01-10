@@ -145,13 +145,17 @@ class usersDao {
     }
   }
 
-  static async updateUser(id, param){
+  static async updateUser(id, param, session){
     try {
-      const result = await usersDao.collection.updateOne({
+      const result = await usersDao.collection.findOneAndUpdate({
         '_id': bson.ObjectId.createFromHexString(id)
-      }, { $set: param })
-      if (result.modifiedCount === 1) {
-        return { success: 'Succesfully updated user' }
+      }, { $set: param }, { returnOriginal: false })
+      if (result.ok === 1) {
+        const user = result.value
+        delete user.sessions
+        delete user.password
+        user.session = session
+        return user
       } else {
         return { error: 'An error occured while updating the user' }
       }

@@ -28,8 +28,7 @@ app.use('/sessions', sessionsRouter)
 
 // Route not found
 app.use('*', (req, res) => {
-  res.status(404)
-  res.json({ error: 'Route not found' })
+  res.status(404).json({ error: 'Route not found' })
 })
 
 export { app }

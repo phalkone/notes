@@ -6,7 +6,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "CooL2@tEst.com",
+  "email": "cool4@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -17,7 +17,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cooL3@tEst.com",
+  "email": "cool4@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -28,7 +28,7 @@ content-type: application/json
 @authToken = {{login.response.headers.x-access-token}}
 
 # Get user profile
-GET {{baseURL}}/users/{{userID}}
+GET {{baseURL}}/users/5ffaf6561fe93d02d1c0db5d
 x-access-token: {{authToken}}
 content-type: application/json
 
@@ -60,6 +60,6 @@ content-type: application/json
 
 ###
 # Delete user
-DELETE {{baseURL}}/users/{{userID}}
+DELETE {{baseURL}}/users/5ffafc7a0316a903096a7710
 x-access-token: {{authToken}}
 content-type: application/json
