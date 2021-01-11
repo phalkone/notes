@@ -13,9 +13,7 @@ roles | [String] | Array of strings according to predefined roles
 notes | [ObjectId] | Array of notes belonging to user
 tags | [String] | Array of unique strings defining all tags used in the notes
 
-### Endpoints
-
-#### Overview
+### Overview
 
 URL | Method | Action
 --- | ------ | ------
@@ -25,7 +23,7 @@ URL | Method | Action
 /users/:id | PUT | Update user information
 /users/:id | DELETE | Delete user
 
-#### Create new user
+### Create new user
 
     POST /users
 
@@ -34,7 +32,7 @@ Name | Type | In | Description
 email | String | body | unique email of the user in valid format
 password | String | body | password of user
 
-#### List all users
+### List all users
 
     GET /users
 
@@ -46,7 +44,7 @@ roles | String | query | *optional* filter by role
 page | int | query | *optional*  page number - default 0
 max_page | int | query | *optional* results per page - default 20
 
-#### Get individual user
+### Get individual user
 
     GET /users/:id
 
@@ -55,7 +53,7 @@ Name | Type | In | Description
 x-access-token | String | header | authentication
 id | String | path | present user id
 
-#### Update individual user
+### Update individual user
 
     PUT /users/:id
 
@@ -64,7 +62,7 @@ Name | Type | In | Description
 x-access-token | String | header | authentication
 id | String | path | present user id
 
-#### Delete individual user
+### Delete individual user
 
     PUT /users/:id
 
@@ -79,16 +77,14 @@ id | String | path | present user id
 
 Authentication is based on JSON web tokens. Pass a JWT in each HTTP header x-access-token to make authenticated request.
 
-### Endpoints
-
-#### Overview
+### Overview
 
 URL | Method | Action
 --- | ------ | ------
 /sessions | POST | To log in a user
 /sessions/:id | DELETE | To log out a user
 
-#### Open new session
+### Open new session
 
     POST /sessions
 
@@ -100,7 +96,7 @@ password | String | body | password of user
 
 Returns JWT valid for 7 days or until session is closed.
 
-#### Close session
+### Close session
 
     DElETE /sessions/:jwt
 
@@ -122,9 +118,7 @@ tags | [String] | Optional
 created_on | Date | Automatic date value
 updated_on | Date | Autonatic date value
 
-### Endpoints
-
-#### Overview
+### Overview
 
 URL | Method | Action
 --- | ------ | ------
@@ -134,20 +128,20 @@ URL | Method | Action
 /notes/:id | PUT | Update note
 /notes/:id | DELETE | Delete note
 
-#### Create new note
+### Create new note
 
     POST /notes
 
 Name | Type | In | Description
 ----- | --- | -- | -----------
 x-access-token | String | header | authentication
-title | String | body | title of note
-body | String | body | body of note
+title | String | body | *optional* title of note
+body | String | body | *optional* body of note
 favorite | Boolean | body | *optional* mark as favorite
 tags | [String] | body | *optional* mark as favorite
 files | [ObjectId] | body | *optional* files contained in the note
 
-#### List notes
+### List notes
 
     GET /notes
 
@@ -157,8 +151,10 @@ x-access-token | String | header | authentication
 title | String | query | *optional* title of note
 favorite | Boolean | query | *optional* mark as favorite
 tags | [String] | query | *optional* mark as favorite
+page | int | query | *optional*  page number - default 0
+max_page | int | query | *optional* results per page - default 20
 
-#### Get specific note
+### Get specific note
 
     GET /notes/:id
 
@@ -167,7 +163,7 @@ Name | Type | In | Description
 x-access-token | String | header | authentication
 id | String | path | id of note
 
-#### Update specific note
+### Update specific note
 
     PUT /notes/:id
 
@@ -176,7 +172,7 @@ Name | Type | In | Description
 x-access-token | String | header | authentication
 id | String | path | id of note
 
-#### Delete specific note
+### Delete specific note
 
     DELETE /notes/:id
 
