@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import morgan from 'morgan'
 import bodyParser from 'body-parser'
+import helmet from 'helmet'
 import { usersRouter } from './routes/users.router.js'
 import { notesRouter } from './routes/notes.router.js'
 import { sessionsRouter } from './routes/sessions.router.js'
@@ -17,6 +18,7 @@ const app = express('')
 app.use(cors(corsOptions))
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
+app.use(helmet())
 
 // For logging purposes
 app.use(morgan('dev'))
