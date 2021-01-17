@@ -20,14 +20,20 @@ db.createCollection('notes', {
           description: 'Marked as favorite'
         },
         files: {
-          bsonType: ['objectId'],
-          description: 'Array containing the files associated with the notes',
-          uniqueItems: true
+          bsonType: ['array'],
+          description: 'Array containing the user\'s unique tags',
+          uniqueItems: true,
+          items: {
+            bsonType: 'objectId'
+          }
         },
         tags: {
-          bsonType: ['string'],
-          description: 'Array containing the tags associated with the notes',
-          uniqueItems: true
+          bsonType: ['array'],
+          description: 'Array containing the user\'s unique tags',
+          uniqueItems: true,
+          items: {
+            bsonType: 'string'
+          }
         },
         created_on: {
           bsonType: 'date',
@@ -42,4 +48,5 @@ db.createCollection('notes', {
   }
 })
 
+db.notes.createIndex({ title: 'text' })
 db.notes.createIndex({ tags: 1 })

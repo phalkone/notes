@@ -7,11 +7,16 @@ class notesDao {
     notesDao.collection = coll
   }
 
-  static async createNote (note) {
+  static async createNote (noteParams) {
     try {
-      const result = await notesDao.collection.insertOne(note)
-      if (result.insertedCount === 1) {
-        return { success: 'Succesfully added note' }
+      const params = {
+        ...noteParams,
+        updated_on: new Date(),
+        created_on: new Date()
+      }
+      const note = await notesDao.collection.insertOne(params)
+      if (note.insertedCount === 1) {
+        return note.ops[0]
       } else {
         return { error: 'An error occured while creating the note' }
       }
@@ -20,60 +25,66 @@ class notesDao {
     }
   }
 
-  static async getNote(id){
+  static async getNote(userNotes, id){
     try {
-      const pipeline = [
-        {
-          '$match': {
-            '_id': bson.ObjectId.createFromHexString(id)
-          }
-        }, {
-          '$limit': 1
-        }, {
-          '$lookup': {
-            'from': 'sessions', 
-            'localField': '_id', 
-            'foreignField': 'note_id', 
-            'as': 'sessions'
-          }
-        } , {
-          '$project': {
-            'password': 0
-          }
-        }
-      ]
-      const cursor = await notesDao.collection.aggregate(pipeline)
-      const note = await cursor.toArray()
-      return note[0]
+      const note = await notesDao.collection.findOne(
+        { $and: [ { _id: bson.ObjectId.createFromHexString(id) },
+        {_id: { $in: userNotes }}]}
+      )
+      return note
     } catch (err) {
-      console.log(err)
       return { error: err.toString() }
     }
   }
 
-  static async getNotes(params){
+  static async getNotes(ids, params){
     try {
       const limit = + params.max_page || 20
       const skip = params.page * params.max_page || 0
-      const query = {}
-      if(params.email) query.email = params.email
-      if(params.roles) query.roles = params.roles
-      const cursor = await notesDao.collection.find(query)
-        .sort({ email: 1 }).skip(skip).limit(limit)
-      return await cursor.toArray()
+
+      const pipeline = []
+      if(params.title) pipeline.push({ $match: { $text: { $search: params.title }}})
+      pipeline.push({ $match: { _id: { $in: ids }}})
+      if(params.favorite) pipeline.push({ $match: { 
+        favorite: params.favorite === 'true' }})
+      if(params.tags) pipeline.push({ $match: { tags: { $all : params.tags.split(',') }}})
+      pipeline.push({ $sort: { updated_on: 1 }})
+      pipeline.push({ $skip: skip })
+      pipeline.push({ $limit: limit })
+      const cursor = await notesDao.collection.aggregate(pipeline)
+      const results = await cursor.toArray()
+      return results
     } catch (err) {
-      console.log(err)
       return { error: err.toString() }
     }
   }
 
-  static async updateNote(id, param){
+  static async getTags(ids){
     try {
-      const result = await notesDao.collection.updateOne({
-        '_id': bson.ObjectId.createFromHexString(id)
-      }, { $set: param })
-      if (result.modifiedCount === 1) {
-        return { success: 'Succesfully updated note' }
+      const pipeline = []
+      pipeline.push({ $match: { _id: { $in: ids }}})
+      pipeline.push({ $unwind: { path: '$tags' }})
+      pipeline.push({ $group: { _id: null, tags: { $addToSet: '$tags' }}})
+      
+      const cursor = await notesDao.collection.aggregate(pipeline)
+      const results = await cursor.toArray()
+      return results[0].tags.sort()
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async updateNote(userNotes, id, param){
+    try {
+      const result = await notesDao.collection.findOneAndUpdate(
+        { $and: [ { _id: bson.ObjectId.createFromHexString(id) },
+          { _id: { $in: userNotes }}]}
+      , { 
+        $set: param,
+        $currentDate: { updated_on: true }
+      }, {returnOriginal: false})
+      if (result.value) {
+        return result.value
       } else {
         return { error: 'An error occured while updating the note' }
       }
@@ -82,13 +93,30 @@ class notesDao {
     }
   }
 
-  static async deleteNote(id){
+  static async deleteUsersNotes(userNotes){
     try {
-      const result = await notesDao.collection.deleteOne({
-        '_id': bson.ObjectId.createFromHexString(id)
+      console.log(userNotes)
+      const result = await notesDao.collection.deleteMany({
+        _id: { $in: userNotes}
       })
-      if (result.deletedCount === 1) {
-        return { success: 'Succesfully deleted note' }
+      if (result.deletedCount === userNotes.length) {
+        return { success: 'Deleted all the user\'s notes' }
+      } else {
+        return { error: 'An error occured while deleting the note' }
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async deleteNote(userNotes, id){
+    try {
+      const result = await notesDao.collection.findOneAndDelete(
+        { $and: [ { _id: bson.ObjectId.createFromHexString(id) },
+        { _id: { $in: userNotes }}]}
+      )
+      if (result.ok === 1) {
+        return result.value
       } else {
         return { error: 'An error occured while deleting the note' }
       }

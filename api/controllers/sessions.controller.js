@@ -20,7 +20,7 @@ class sessionsController {
           if (user.error) {
             res.status(400).json(user)
           } else {
-            const token = await sessionsController.generateToken(user._id, user.session._id)
+            const token = await sessionsController.generateToken(user._id, user.sessions[0]._id)
             if (token.error) return res.status(401).json({ error: token.error })
             res.set('x-access-token', token)
             res.status(200).json(user)
@@ -49,8 +49,8 @@ class sessionsController {
       const token = req.headers['x-access-token']
       const decoded = await jwt.verify(token, process.env.SECRET)
       const user = await usersDao.getSession(decoded.user_id, decoded.session_id)
-      if (user.session &&
-          new Date(user.session.expiry).valueOf() > Date.now()) {
+      if (user.sessions &&
+          new Date(user.sessions[0].expiry).valueOf() > Date.now()) {
         req.user = user
         next()
       } else {
@@ -75,8 +75,7 @@ class sessionsController {
 
   static async logout (req, res) {
     try {
-      const session_id = req.params.id
-      const result = await usersDao.deleteSession(req.user._id, session_id)
+      const result = await usersDao.deleteSession(req.user._id, req.params.id)
       if (result.error) {
         res.status(400).json({ error: result.error })
       } else {

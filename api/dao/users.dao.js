@@ -20,15 +20,6 @@ class usersDao {
     return session
   }
 
-  static sanitizeUser(user, session){
-    delete user.password
-    delete user.sessions
-    user.session = session
-    user.session._id = user.session._id.toHexString()
-    user._id = user._id.toString()
-    return user
-  }
-
   static async createUser (user, userAgent) {
     try {
       const session = usersDao.newSession(userAgent)
@@ -37,7 +28,7 @@ class usersDao {
         sessions: [session]
       })
       if (result.insertedCount === 1) {
-        return usersDao.sanitizeUser(result.ops[0], session)
+        return result.ops[0]
       } else {
         return { error: 'An error occured while creating the user' }
       }
@@ -46,18 +37,19 @@ class usersDao {
     }
   }
 
-  static async createSession (id, userAgent) {
+  static async createSession (_id, userAgent) {
     try {
       const session = usersDao.newSession(userAgent)
-      const user = await usersDao.collection.findOneAndUpdate({
-        _id: bson.ObjectId.createFromHexString(id.toString())
-       },{ 
+      const user = await usersDao.collection.findOneAndUpdate({ _id },{ 
         $push: {sessions: session }
       },{
-        returnOriginal: false
+        returnOriginal: false,
+        projection: { sessions: { $elemMatch: { 
+          _id: session._id } }, 
+          password: 0 }
       })
       if (user.value) {
-        return usersDao.sanitizeUser(user.value, session)
+        return user.value
       } else {
         return { error: 'Error creating new session' }
       }
@@ -74,13 +66,13 @@ class usersDao {
         $currentDate: { "sessions.$[elem].last_access": true }
       }, {
         arrayFilters: [{ "elem._id": bson.ObjectId.createFromHexString(session_id) }],
-        returnOriginal: false
+        returnOriginal: false,
+        projection: { sessions: { $elemMatch: { 
+          _id: bson.ObjectId.createFromHexString(session_id) } }, 
+          password: 0 }
       })
       if(user.value){
-        const session = user.value.sessions.filter((session) => {
-          return session._id.toString() === session_id.toString()
-        })[0]
-        return usersDao.sanitizeUser(user.value, session)
+        return user.value
       } else {
         return { error: 'Requested session not found' }
       }
@@ -89,11 +81,10 @@ class usersDao {
     }
   }
 
-  static async deleteSession (id, session_id) {
+  static async deleteSession (_id, session_id) {
     try {
-      const result = await usersDao.collection.updateOne({
-        '_id': bson.ObjectId.createFromHexString(id)
-      }, { $pull: { sessions: { 
+      const result = await usersDao.collection.updateOne({ _id }, 
+      { $pull: { sessions: { 
         '_id': bson.ObjectId.createFromHexString(session_id) 
       }}})
       if (result.modifiedCount === 1) {
@@ -101,17 +92,6 @@ class usersDao {
       } else {
         return { error: 'Error deleting session' }
       }
-    } catch (err) {
-      return { error: err.toString() }
-    }
-  }
-
-  static async getUser(id){
-    try {
-      const user = await usersDao.collection.findOne({
-        _id: bson.ObjectId.createFromHexString(id),
-      }, { password: 0 })
-      return user
     } catch (err) {
       return { error: err.toString() }
     }
@@ -145,17 +125,18 @@ class usersDao {
     }
   }
 
-  static async updateUser(id, param, session){
+  static async updateUser(_id, param, session_id){
     try {
-      const result = await usersDao.collection.findOneAndUpdate({
-        '_id': bson.ObjectId.createFromHexString(id)
-      }, { $set: param }, { returnOriginal: false })
-      if (result.ok === 1) {
-        const user = result.value
-        delete user.sessions
-        delete user.password
-        user.session = session
-        return user
+      delete param.roles
+      const result = await usersDao.collection.findOneAndUpdate({ _id }, 
+        { $set: param }, { 
+          returnOriginal: false,
+          projection: { sessions: { $elemMatch: { 
+            _id: session_id } }, 
+            password: 0 }
+        })
+      if (result.value) {
+        return result.value
       } else {
         return { error: 'An error occured while updating the user' }
       }
@@ -164,15 +145,53 @@ class usersDao {
     }
   }
 
-  static async deleteUser(id){
+  static async deleteUser(_id){
     try {
-      const result = await usersDao.collection.deleteOne({
-        '_id': bson.ObjectId.createFromHexString(id)
-      })
+      const result = await usersDao.collection.deleteOne({ _id })
       if (result.deletedCount === 1) {
         return { success: 'Succesfully deleted user' }
       } else {
         return { error: 'An error occured while deleting the user' }
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async linkNote(_id, noteId, tags){
+    try {
+      const user = await usersDao.collection.findOneAndUpdate({ _id },{ 
+        $push: {
+          notes: bson.ObjectId.createFromHexString(noteId.toString()),
+          tags: { $each: tags }
+        }
+      },{
+        returnOriginal: false,
+        projection: { sessions: 0, password: 0 }
+      })
+      if (user.value) {
+        return user.value
+      } else {
+        return { error: 'Error linking note to user' }
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async unlinkNote(_id, noteId, tags){
+    try {
+      const user = await usersDao.collection.findOneAndUpdate({ _id },{ 
+        $pull: { notes: noteId },
+        $set: { tags }
+      },{
+        returnOriginal: false,
+        projection: { sessions: 0, password: 0 }
+      })
+      if (user.value) {
+        return user.value
+      } else {
+        return { error: 'Error unlinking note from user' }
       }
     } catch (err) {
       return { error: err.toString() }

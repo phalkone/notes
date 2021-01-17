@@ -1,2 +1,3 @@
 # Notes
-A notes application supporting encryption.
+
+A simple notes app built as a learning project.

@@ -33,7 +33,7 @@ suite('Functional testing of users API calls', function () {
           assert.equal(res.status, 200)
           assert.exists(res.body._id)
           sessionInfo.jwt = res.headers['x-access-token']
-          sessionInfo.session_id = res.body.session._id
+          sessionInfo.session_id = res.body.sessions[0]._id
           sessionInfo.user_id = res.body._id
           done()
         })
@@ -48,7 +48,7 @@ suite('Functional testing of users API calls', function () {
           assert.equal(res.status, 200)
           assert.exists(res.body._id)
           testUser2.jwt = res.headers['x-access-token']
-          testUser2.session_id = res.body.session._id
+          testUser2.session_id = res.body.sessions[0]._id
           testUser2.user_id = res.body._id
           done()
         })
@@ -157,10 +157,10 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.session._id)
+          assert.exists(res.body.sessions[0]._id)
           assert.exists(res.body._id)
           sessionInfo.jwt1 = res.headers['x-access-token']
-          sessionInfo.session_id1 = res.body.session._id
+          sessionInfo.session_id1 = res.body.sessions[0]._id
           done()
         })
     })
@@ -175,10 +175,10 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.session._id)
+          assert.exists(res.body.sessions[0]._id)
           assert.exists(res.body._id)
           sessionInfo.jwt2 = res.headers['x-access-token']
-          sessionInfo.session_id2 = res.body.session._id
+          sessionInfo.session_id2 = res.body.sessions[0]._id
           done()
         })
     })
@@ -299,7 +299,7 @@ suite('Functional testing of users API calls', function () {
           assert.equal(res.status, 200)
           assert.equal(res.body._id, sessionInfo.user_id)
           assert.equal(res.body.email, testUser.email)
-          assert.exists(res.body.session)
+          assert.exists(res.body.sessions)
           assert.notExists(res.body.password)
           done()
         })
@@ -367,7 +367,7 @@ suite('Functional testing of users API calls', function () {
         .end(function (err, res) {
           if (err) return err
           assert.equal(res.status, 200)
-          assert.exists(res.body.session._id)
+          assert.exists(res.body.sessions[0]._id)
           assert.exists(res.body._id)
           done()
         })

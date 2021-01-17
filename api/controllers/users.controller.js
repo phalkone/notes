@@ -1,4 +1,5 @@
 import { usersDao } from '../dao/users.dao.js'
+import { notesDao } from '../dao/notes.dao.js'
 import { sessionsController } from './sessions.controller.js'
 import bcrypt from 'bcryptjs'
 
@@ -19,10 +20,10 @@ class usersController {
     try {
       const password = await bcrypt.hash(req.body.password, 10)
       const user = await usersDao.createUser({
-        email, password, roles: ['user']
+        email, password, roles: ['user'], tags: [], notes: []
       }, req.headers['user-agent'])
       if (user._id) {
-        const token = await sessionsController.generateToken(user._id, user.session._id)
+        const token = await sessionsController.generateToken(user._id, user.sessions[0]._id)
         if (token.error) return res.status(401).json({ error: token.error })
         res.set('x-access-token', token)
         res.status(200).json(user)
@@ -36,7 +37,7 @@ class usersController {
 
   static async getUser (req, res) {
     try {
-      if (req.params.id === req.user._id) {
+      if (req.params.id === req.user._id.toString()) {
         res.status(200).json(req.user)
       } else {
         res.status(401).json({ error: 'Not authorized' })
@@ -57,7 +58,7 @@ class usersController {
 
   static async updateUser (req, res) {
     try {
-      if (req.params.id === req.user._id) {
+      if (req.params.id === req.user._id.toString()) {
         const param = {}
         if (req.body.email) param.email = req.body.email
         if (req.body.password && passwordRegex.test(req.body.password)) {
@@ -66,9 +67,9 @@ class usersController {
           return res.status(400).json({ error: passwordValid })
         }
         if (Object.keys(param).length === 0) {
-          return res.status(400).json({ error: 'Please provide paramters to update'})
+          return res.status(400).json({ error: 'Please provide paramters to update' })
         }
-        const result = await usersDao.updateUser(req.user._id, param, req.user.session)
+        const result = await usersDao.updateUser(req.user._id, param, req.user.sessions[0]._id)
         if (result.error) {
           res.status(400).json(result)
         } else {
@@ -84,9 +85,14 @@ class usersController {
 
   static async deleteUser (req, res) {
     try {
-      if (req.params.id === req.user._id) {
-        const result = await usersDao.deleteUser(req.user._id)
-        res.status(200).json(result)
+      if (req.params.id === req.user._id.toString()) {
+        const notes = await notesDao.deleteUsersNotes(req.user.notes)
+        const user = await usersDao.deleteUser(req.user._id)
+        if (user.success && notes.success) {
+          res.status(200).json(user)
+        } else {
+          res.status(400).json({ error: 'Not able to delete user' })
+        }
       } else {
         res.status(401).json({ error: 'Not authorized' })
       }

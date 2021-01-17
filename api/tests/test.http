@@ -6,7 +6,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cool4@tEst.com",
+  "email": "cool3@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -17,20 +17,67 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cool4@tEst.com",
+  "email": "cool3@tEst.com",
   "password": "neW9$tes51t9"
 }
 
 ###
 
 @userID = {{login.response.body._id}}
-@sessionID = {{login.response.body.session._id}}
+@sessionID = {{login.response.body.sessions[0]._id}}
 @authToken = {{login.response.headers.x-access-token}}
 
 # Get user profile
-GET {{baseURL}}/users/5ffaf6561fe93d02d1c0db5d
+GET {{baseURL}}/users/{{userID}}
 x-access-token: {{authToken}}
 content-type: application/json
+
+###
+# Create a new note
+# @name note
+POST {{baseURL}}/notes
+x-access-token: {{authToken}}
+content-type: application/json
+
+{
+  "title": "Does it work test",
+  "body": "This is the body text",
+  "tags": ["tag5", "tag9"],
+  "favorite": true
+}
+###
+@noteID = {{note.response.body.note._id}}
+
+###
+# Get a note
+GET {{baseURL}}/notes/{{noteID}}
+x-access-token: {{authToken}}
+content-type: application/json 
+
+###
+# Update a note
+PUT {{baseURL}}/notes/{{noteID}}
+x-access-token: {{authToken}}
+content-type: application/json 
+
+{
+  "title": "Updated",
+  "body": "This is the body text that has been updated",
+  "tags": ["tag15", "tag19"],
+  "favorite": false
+}
+###
+# Delete a note
+DELETE {{baseURL}}/notes/{{noteID}}
+x-access-token: {{authToken}}
+content-type: application/json 
+
+###
+# Get all notes
+GET {{baseURL}}/notes
+  ?favorite=true
+x-access-token: {{authToken}}
+content-type: application/json 
 
 ###
 # Get all users as admin
@@ -48,7 +95,7 @@ x-access-token: {{authToken}}
 content-type: application/json
 
 {
-  "email": "cooL3@tEst.com",
+  "email": "cooL5@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -60,6 +107,6 @@ content-type: application/json
 
 ###
 # Delete user
-DELETE {{baseURL}}/users/5ffafc7a0316a903096a7710
+DELETE {{baseURL}}/users/{{userID}}
 x-access-token: {{authToken}}
 content-type: application/json
