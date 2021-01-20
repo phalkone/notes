@@ -5,7 +5,8 @@ import { readFileSync } from 'fs'
 import mongodb from 'mongodb'
 import { usersDao } from './dao/users.dao.js'
 import { notesDao } from './dao/notes.dao.js'
-const { MongoClient } = mongodb
+import { filesDao } from './dao/files.dao.js'
+const { MongoClient, GridFSBucket } = mongodb
 
 // Configure .env use
 dotenv.config()
@@ -21,6 +22,7 @@ async function run () {
     console.log('Connected to db')
     usersDao.setCollection(client.db('notes').collection('users'))
     notesDao.setCollection(client.db('notes').collection('notes'))
+    filesDao.setFSBucket(new GridFSBucket(client.db('notes')))
   } catch (e) {
     console.log(e)
   }

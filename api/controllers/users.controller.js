@@ -1,5 +1,6 @@
 import { usersDao } from '../dao/users.dao.js'
 import { notesDao } from '../dao/notes.dao.js'
+import { filesDao } from '../dao/files.dao.js'
 import { sessionsController } from './sessions.controller.js'
 import bcrypt from 'bcryptjs'
 
@@ -87,8 +88,9 @@ class usersController {
     try {
       if (req.params.id === req.user._id.toString()) {
         const notes = await notesDao.deleteUsersNotes(req.user.notes)
+        const files = await filesDao.deleteUsersFiles(req.user._id)
         const user = await usersDao.deleteUser(req.user._id)
-        if (user.success && notes.success) {
+        if (user.success && notes.success && files.success) {
           res.status(200).json(user)
         } else {
           res.status(400).json({ error: 'Not able to delete user' })

@@ -93,6 +93,44 @@ class notesDao {
     }
   }
 
+  static async addFile(noteId, fileId, userNotes){
+    try {
+      const result = await notesDao.collection.findOneAndUpdate(
+        { $and: [ { _id: bson.ObjectId.createFromHexString(noteId) },
+          { _id: { $in: userNotes }}]}
+      , { 
+        $push: { files: fileId },
+        $currentDate: { updated_on: true }
+      }, {returnOriginal: false})
+      if (result.value) {
+        return result.value
+      } else {
+        return { error: 'An error occured while updating the note' }
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
+  static async deleteFile(fileId, userNotes){
+    try {
+      const result = await notesDao.collection.findOneAndUpdate(
+        { $and: [ { files: bson.ObjectId.createFromHexString(fileId) },
+          { _id: { $in: userNotes }}]}
+      , { 
+        $pull: { files: bson.ObjectId.createFromHexString(fileId) },
+        $currentDate: { updated_on: true }
+      }, {returnOriginal: false})
+      if (result.erorr) {
+        return { error: 'An error occured while updating the note' }
+      } else {
+        return result.value
+      }
+    } catch (err) {
+      return { error: err.toString() }
+    }
+  }
+
   static async deleteUsersNotes(userNotes){
     try {
       console.log(userNotes)

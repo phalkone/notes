@@ -180,3 +180,19 @@ Name | Type | In | Description
 ----- | --- | -- | -----------
 x-access-token | String | header | authentication
 id | String | path | id of note
+
+## Files
+
+### Schema
+
+Field | Type | Comment
+----- | ---- | -------
+filename | String | Mandatory
+
+### Overview
+
+URL | Method | Action
+--- | ------ | ------
+/files | POST | Create new file
+/files/:id | GET | Get file by ID
+/files/:id | DELETE | Delete file

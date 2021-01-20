@@ -21,7 +21,7 @@ db.createCollection('notes', {
         },
         files: {
           bsonType: ['array'],
-          description: 'Array containing the user\'s unique tags',
+          description: 'Array containing the user\'s unique files',
           uniqueItems: true,
           items: {
             bsonType: 'objectId'

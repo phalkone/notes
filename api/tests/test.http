@@ -80,6 +80,33 @@ x-access-token: {{authToken}}
 content-type: application/json 
 
 ###
+# Upload a new file
+# @name upload
+POST {{baseURL}}/files/{{noteID}}
+x-access-token: {{authToken}}
+content-type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="track"; filename="test.png"
+Content-Type: application/octet-stream
+
+< ./test.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
+
+###
+@uploadID = {{upload.response.body.file_id}}
+
+###
+# Get file
+GET {{baseURL}}/files/{{uploadID}}
+x-access-token: {{authToken}}
+
+###
+# Delete file
+DELETE {{baseURL}}/files/{{uploadID}}
+x-access-token: {{authToken}}
+
+###
 # Get all users as admin
 GET {{baseURL}}/users
   ?roles=admin

@@ -6,6 +6,7 @@ import helmet from 'helmet'
 import { usersRouter } from './routes/users.router.js'
 import { notesRouter } from './routes/notes.router.js'
 import { sessionsRouter } from './routes/sessions.router.js'
+import { filesRouter } from './routes/files.router.js'
 
 // Cross plaftorm origin calls to API
 const corsOptions = {
@@ -24,6 +25,7 @@ app.use(helmet())
 app.use(morgan('dev'))
 
 // Routes
+app.use('/files', filesRouter)
 app.use('/users', usersRouter)
 app.use('/notes', notesRouter)
 app.use('/sessions', sessionsRouter)
