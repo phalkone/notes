@@ -28,6 +28,7 @@ class usersDao {
         sessions: [session]
       })
       if (result.insertedCount === 1) {
+        delete result.ops[0].password
         return result.ops[0]
       } else {
         return { error: 'An error occured while creating the user' }

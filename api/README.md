@@ -193,6 +193,6 @@ filename | String | Mandatory
 
 URL | Method | Action
 --- | ------ | ------
-/files | POST | Create new file
+/files/;id | POST | Create new file for a given note id
 /files/:id | GET | Get file by ID
 /files/:id | DELETE | Delete file

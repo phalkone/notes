@@ -1,0 +1,70 @@
+openapi: 3.0.0
+info:
+  title: Notes App
+  description: A Notes App built as a learning project
+  version: 1.0.0
+
+servers:
+  - url: https://localhost:8443
+
+paths:
+  /users:
+    post:
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+                  format: password
+                  example: neW9$tes51t9
+      responses:
+        '200':
+          description: A JSON object of the new user
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  _id:
+                    type: string
+                    format: objectId
+                  email:
+                    type: string
+                  roles:
+                    type: array
+                    items:
+                      type: string
+                  tags:
+                    type: array
+                    items:
+                      type: string
+                  notes:
+                    type: array
+                    items:
+                      type: objectId
+                  sessions:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        _id:
+                          type: string
+                          format: objectId
+                        last_access:
+                          type: string
+                          format: date-time
+                        user_agent:
+                          type: string
+                        expiry:
+                          type: string
+                          format: date-time
+        '400':
+          description: Bad request.
