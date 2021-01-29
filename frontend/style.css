@@ -84,18 +84,73 @@ h1 {
   padding-left: 20px;
 }
 
+.active-filter {
+  cursor: pointer;
+  margin-top: 5px;
+}
+
+.filterdown-content {
+  display: none;
+  position: absolute;
+  background-color: #44596B;
+  width: 100%;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  height: 100vh;
+  overflow: scroll;
+}
+
+.filterdown-content ul {
+  list-style-type: none;
+  margin: 0;
+  padding:0;
+}
+
+.filterdown-content li {
+  padding: 6px 0 6px 20px;
+  color: #011627;
+  text-decoration: none;
+  display: block;
+  border-bottom: 1px solid #011627;
+}
+
+.filterdown-content ul ul li {
+  padding: 0 0 0 40px;
+  color: #011627;
+  text-decoration: none;
+  display: block;
+  border: none;
+}
+
+.filter:hover .filterdown-content {
+  display: block;
+}
+
+.inactive-filter {
+  color: #96A3B1;
+}
+
+.active-tag {
+  color: #96A3B1;
+}
+
+.inactive-tag {
+  color: #4F4F4F;
+}
+
 .icons {
   float: right;
   display: flex;
   margin: 15px 10px 0 0;
 }
 
-.dropbtn {
+.iconbtn {
   cursor: pointer;
   margin-left: 15px;
 }
 
-.dropdown-content {
+.icondown-content {
   display: none;
   position: absolute;
   background-color: #44596B;
@@ -105,7 +160,7 @@ h1 {
   padding-top: 15px;
 }
 
-.dropdown-content a {
+.icondown-content a {
   padding: 12px 16px;
   color: #011627;
   text-decoration: none;
@@ -113,7 +168,7 @@ h1 {
   border-top: 1px solid #011627;
 }
 
-.menu-icon:hover .dropdown-content {
+.menu-icon:hover .icondown-content {
   display: block;
 }
 
