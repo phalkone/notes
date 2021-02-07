@@ -12,7 +12,7 @@ services:
     swagger:
       image: swaggerapi/swagger-ui
       ports:
-      - "8080:8080"
+      - "8082:8080"
       volumes: 
       - ./api/:/notes
       environment:
@@ -29,3 +29,14 @@ services:
             PATH: /app/node_modules/.bin:$PATH
         depends_on:
         - db
+    frontend:
+        build: vue-notes/
+        ports:
+        - "8080:8080"
+        working_dir: /app/notes
+        volumes: 
+        - ./vue-notes/:/app/notes
+        environment:
+            PATH: /app/node_modules/.bin:$PATH
+        depends_on:
+        - api

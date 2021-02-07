@@ -6,7 +6,9 @@ test.png
 
 # local env files
 .env
+.env.local
 .env.docker
+.env.*.local
 
 # Log files
 npm-debug.log*
