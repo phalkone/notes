@@ -30,12 +30,12 @@ services:
         depends_on:
         - db
     frontend:
-        build: vue-notes/
+        build: fe/
         ports:
         - "8080:8080"
         working_dir: /app/notes
         volumes: 
-        - ./vue-notes/:/app/notes
+        - ./react-notes/:/app/notes
         environment:
             PATH: /app/node_modules/.bin:$PATH
         depends_on:

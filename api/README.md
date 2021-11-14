@@ -64,7 +64,7 @@ id | String | path | present user id
 
 ### Delete individual user
 
-    PUT /users/:id
+    DELETE /users/:id
 
 Name | Type | In | Description
 ----- | --- | -- | -----------

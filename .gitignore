@@ -2,6 +2,7 @@
 node_modules/
 dist/
 cert/
+various/
 test.png
 
 # local env files

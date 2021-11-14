@@ -6,7 +6,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cool3@tEst.com",
+  "email": "cool5@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -17,7 +17,7 @@ User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (K
 content-type: application/json
 
 {
-  "email": "cool3@tEst.com",
+  "email": "cooL5@tEst.com",
   "password": "neW9$tes51t9"
 }
 
@@ -40,9 +40,9 @@ x-access-token: {{authToken}}
 content-type: application/json
 
 {
-  "title": "Does it work test",
+  "title": "Test",
   "body": "This is the body text",
-  "tags": ["tag5", "tag9"],
+  "tags": ["tag10", "tag11"],
   "favorite": true
 }
 ###
@@ -61,10 +61,10 @@ x-access-token: {{authToken}}
 content-type: application/json 
 
 {
-  "title": "Updated",
+  "title": {"test": "test"},
   "body": "This is the body text that has been updated",
-  "tags": ["tag15", "tag19"],
-  "favorite": false
+  "tags": ["tag3", "tag4"],
+  "favorite": true
 }
 ###
 # Delete a note
